@@ -7,3 +7,9 @@ build/
 *.log
 .vite/
 .next/
+LEARNING_NOTES.md
+FRONTEND_LEARNING.md
+FOLDER.md
+NEXT_SESSION_PROMPT.md
+ARCHITECTURE.md
+DEBUG_LOG.md
