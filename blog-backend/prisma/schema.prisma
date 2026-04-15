@@ -1,0 +1,74 @@
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PostStatus{
+  DRAFT
+  PUBLISHED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  posts        Post[]
+  libraries    Library[]
+}
+
+
+model Post {
+  id          String     @id @default(cuid())
+  authorId    String
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  title       String
+  content     String
+  description String?
+  status      PostStatus @default(DRAFT)
+  publishedAt DateTime?
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  libraryEntries LibraryPost[]
+}
+
+model Library {
+  id        String   @id @default(cuid())
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  name      String
+  isDefault Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts     LibraryPost[]
+
+  @@unique([ownerId, name])
+  @@index([ownerId])
+}
+
+model LibraryPost {
+  libraryId String
+  postId    String
+
+  note      String?
+  savedAt   DateTime   @default(now())
+
+  library   Library @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+  post      Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([libraryId, postId])
+  @@index([postId])
+}
