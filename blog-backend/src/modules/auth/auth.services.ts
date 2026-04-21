@@ -23,7 +23,13 @@ export async function registerUser(input: RegisterInput) {
       },
     });
 
-    return user;
+    // Generate token immediately after signup (Option 1 - instant login)
+    const token = signAccessToken({sub: user.id, email: user.email, name: user.name || ''})
+    
+    return {
+      accessToken: token,
+      user: { id: user.id, email: user.email, name: user.name },
+    };
   } catch (err) {
     if (
       err instanceof Prisma.PrismaClientKnownRequestError &&
@@ -60,9 +66,10 @@ export async function loginUser(email:string,password:string){
     throw e;
   }
 
-  const token = signAccessToken({sub:user.id,email:user.email})
+  const token = signAccessToken({sub:user.id,email:user.email,name:user.name || ''})
+ console.log('🔐 Generated Token:', token)
   return{
-    token,
+    accessToken: token,
     user: { id: user.id, email: user.email, name: user.name },
   }
 }

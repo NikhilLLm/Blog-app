@@ -5,6 +5,7 @@ import type { Request,Response,NextFunction } from "express"
 type JwtPayload={
     sub:string  //user id
     email:string
+    name?:string  // ← Optional (can be undefined)
 }
 
 
@@ -29,7 +30,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
   try {
     const decoded = verifyAccessToken(token);
-    req.user = { id: decoded.sub, email: decoded.email };
+    req.user = { id: decoded.sub, email: decoded.email, name: decoded.name || '' };
     return next();
   } catch {
     return res.status(401).json({ message: "Invalid or expired token" });

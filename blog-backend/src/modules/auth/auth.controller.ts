@@ -29,6 +29,7 @@ export async function register(req: Request, res: Response) {
 
 export async function login(req:Request, res:Response){
   try{
+    console.log("Request body recieved")
     const parsed=loginSchema.safeParse(req.body)
     if(!parsed.success){
       return res.status(400).json({
@@ -37,6 +38,7 @@ export async function login(req:Request, res:Response){
       })
     }
     const result=await loginUser(parsed.data.email,parsed.data.password)
+    console.log("User login Successful")
     return res.status(200).json(result)
   }catch (err){
     const e = err as Error & { statusCode?: number };
